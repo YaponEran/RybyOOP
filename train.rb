@@ -1,61 +1,57 @@
 class Train
-  attr_reader :number, :type, :amount_vagon
-  attr_accessor :speed
+  attr_accessor :speed, :station, :num_of_vagons, :route
+  attr_reader :number, :type
 
-  def inittialize(number, type, amount_vagon)
+  def initialize(number, type, num_of_vagons)
     @number = number
     @type = type
-    @amount_vagon = amount_vagon
+    @num_of_vagons = num_of_vagons
     @speed = 0
   end
 
-  def train_speed(speed)
-    @speed += speed
-  end
-
-  def train_stop
-    @speed = 0
-  end
-
-  def delete_vagon
-    @amount_vagon -= 1 if @speed == 0 && @amount_vagon > 0
+  def stop
+    self.speed = 0
   end
 
   def add_vagon
-    @amount_vagon += 1 if @speed == 0
+    self.num_of_vagons += 1 if speed == 0
+  end
+
+  def remove_vagon
+    self.num_of_vagons -= 1 if speed == 0 & num_of_vagons > 0
   end
 
   def add_route(route)
-    @route = route
-    @route.start_station.add_station(self)
-    @stations = route.start_station
+    self.route = route
+    self.station = route.start_station
+    station.add_train(self)
   end
 
   def move_station
-    return if end_station?
+    if station != route.end_station
+      station.send_train(self)
+      self.station = self.next_station
+      station.add_train(self)
+    end
   end
 
   def comeback_station
-    return if start_station?
+    if station != route.start_station
+      station.send_train(self)
+      self.station = self.previous_station
+      station.add_train(self)
+    end
   end
 
   def next_station
-    @route.stations[stations_index + 1] unless end_station?
+    route.stations[route.stations.index(station) + 1]
   end
 
-  def prev_station
-    @route.stations[stations_index - 1] unless start_station?
+  def previous_station
+    if station == route.start_station
+      nil
+    else
+      route.stations[route.stations.index(station) - 1]
+    end
   end
-
-  def stations_index
-    @route.stations.index(@stations)
-  end
-
-  def end_station?
-    @stations == @route.end_station?
-  end
-
-  def start_station?
-    stations_index == 0
-  end
-end 
+end

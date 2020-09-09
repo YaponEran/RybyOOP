@@ -9,7 +9,6 @@ class Route
 
   def add_station(station)
     @stations.insert(-2, station)
-    puts "Train was insert!"
   end
 
   def delte_station(station)

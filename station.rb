@@ -11,7 +11,7 @@ class Station
   end
 
   def type_of_train(type)
-    @trains.each {|train| puts train if train.type == type}
+    @trains.each {|train| puts train }
   end
 
   def sent_train(train_type)
